@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notre Mariage Mystère - Niveau 1</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f4ed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        h1, h2, h3 {
+            text-align: center;
+            color: #e83e8c;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #fd79a8, #e83e8c);
+            border-radius: 10px;
+            width: 33.33%;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: -25px;
+            color: #333;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .map-container, .questions-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .map-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1/1;
+            margin: 0 auto;
+            border: 2px solid #718096;
+            background-image: url('carte_europe.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .grid-cell {
+            background-color: rgba(240, 230, 210, 0.1);
+            position: relative;
+        }
+        
+        .grid-cell.eliminated {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .grid-cell.highlight {
+            background-color: rgba(66, 153, 225, 0.4);
+            border: 2px solid #3182ce;
+        }
+        
+        .grid-labels {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto 5px auto;
+        }
+        
+        .grid-labels span {
+            font-weight: bold;
+        }
+        
+        .row-labels {
+            position: absolute;
+            left: -25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 100%;
+        }
+        
+        .question {
+            background-color: #ebf8ff;
+            border: 1px solid #bee3f8;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .question.locked {
+            background-color: #e2e8f0;
+            opacity: 0.7;
+        }
+        
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #3182ce;
+        }
+        
+        .question input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .question button {
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .hint-box {
+            background-color: #fefcbf;
+            border: 1px solid #f6e05e;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .hint-button {
+            background-color: #ecc94b;
+            color: #744210;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .next-button {
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .next-button:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+        }
+        
+        .checkmark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #38a169;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            line-height: 20px;
+        }
+        
+        .home-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c5ce7;
+        }
+        
+        @media (max-width: 768px) {
+            .game-area {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Home button -->
+        <button class="home-button" onclick="goHome()" title="Retour à l'accueil">🏠</button>
+        
+        <h1>Notre Mariage Mystère 💕</h1>
+        <h2>Niveau 1 : La Chasse à la Destination 🗺️</h2>
+        
+        <div class="progress-container">
+            <div class="progress-bar"></div>
+            <div class="progress-text">Niveau 1/3</div>
+        </div>
+        
+        <div class="hint-box">
+            <div><strong>Indice actuel :</strong></div>
+            <div id="current-hint">Répondez aux questions pour découvrir où notre mariage aura lieu.</div>
+        </div>
+        
+        <div class="game-area">
+            <div class="map-container">
+                <h3>Carte d'Europe</h3>
+                
+                <!-- Column Labels (A-H) -->
+                <div class="grid-labels">
+                    <span>A</span><span>B</span><span>C</span><span>D</span>
+                    <span>E</span><span>F</span><span>G</span><span>H</span>
+                </div>
+                
+                <!-- Map Grid -->
+                <div class="map-grid" id="map-grid">
+                    <!-- Les cellules seront ajoutées dynamiquement -->
+                </div>
+            </div>
+            
+            <div class="questions-container">
+                <h3>Questions</h3>
+                <div id="questions-area">
+                    <!-- Les questions seront ajoutées dynamiquement -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-container">
+            <button id="hint-button" class="hint-button">💡 Besoin d'un indice</button>
+            <button id="next-button" class="next-button" disabled>➡️ Niveau Suivant</button>
+        </div>
+    </div>
+    
+    <script>
+        // Données du jeu
+        const gameState = {
+            level1: {
+                completed: false,
+                hints: [
+                    "Répondez aux questions pour découvrir où notre mariage aura lieu.",
+                    "Pour la Question 1, retirez 3 lettres à Normandie et vous trouverez la réponse.",
+                    "Pour la Question 2, il s'agit d'une association mondiale qui offre des opportunités de développement et de leadership à des jeunes gens afin de créer un changement positif.",
+                    "Pour la Question 3, c'était lors de la European Academy de la JCI, plus qu'à trouver où c'est :)",
+                    "Pour la Question 5, on allait faire des vannes, à Vannes, en.....",
+                    "Pour la Question 6, son entreprise en parle avec ferveur, même dans son nom.",
+                    "Pour la Question 9, si on est prêt à payer un gros loyer, on peut avoir la vue sur lacs et montagnes."
+                ],
+                currentHintIndex: 0,
+                questions: [
+                    {
+                        id: 1,
+                        title: "Question 1",
+                        text: "Qu'est ce que Fanny veut être 80% du temps?",
+                        answer: "nomade",
+                        answered: false,
+                        locked: false
+                    },
+                    {
+                        id: 2,
+                        title: "Question 2",
+                        text: "Quel organisme nous a permis de nous rencontrer?",
+                        answer: "JCI",
+                        answered: false,
+                        locked: true
+                    },
+                    {
+                        id: 3,
+                        title: "Question 3",
+                        text: "Dans quel pays nous sommes nous rencontrées pour la 1ère fois en 2019?",
+                        answer: "Suède",
+                        answered: false,
+                        locked: true
+                    },
+                    {
+                        id: 4,
+                        title: "Question 4",
+                        text: "En quelle année nous sommes nous revues à Angers lors d'un Congrès de notre association?",
+                        answer: "2021",
+                        answered: false,
+                        locked: true
+                    },
+                    {
+                        id: 5,
+                        title: "Question 5",
+                        text: "Dans quel moyen de transport avons-nous voyagé pendant 2 mois juste après nos débuts?",
+                        answer: "van",
+                        answered: false,
+                        locked: true
+                    }
+                ],
+                eliminatedRegions: []
+            }
+        };
+        
+        // Éléments DOM
+        const mapGrid = document.getElementById('map-grid');
+        const questionsArea = document.getElementById('questions-area');
+        const hintButton = document.getElementById('hint-button');
+        const nextButton = document.getElementById('next-button');
+        const currentHint = document.getElementById('current-hint');
+        
+        // Initialisation du jeu
+        function initGame() {
+            // Créer la grille
+            createMapGrid();
+            
+            // Créer les questions
+            createQuestions();
+            
+            // Ajouter les événements
+            hintButton.addEventListener('click', showNextHint);
+            nextButton.addEventListener('click', goToNextLevel);
+        }
+        
+        // Créer la grille de la carte
+        function createMapGrid() {
+            // Ajouter les étiquettes de rangées
+            const rowLabels = document.createElement('div');
+            rowLabels.className = 'row-labels';
+            for (let i = 1; i <= 8; i++) {
+                const label = document.createElement('span');
+                label.textContent = i;
+                rowLabels.appendChild(label);
+            }
+            mapGrid.appendChild(rowLabels);
+            
+            // Créer les cellules
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.id = `cell-${row}-${col}`;
+                    
+                    // Mettre en évidence la Normandie (D5)
+                    if (row === 4 && col === 3) {
+                        cell.classList.add('highlight');
+                    }
+                    
+                    mapGrid.appendChild(cell);
+                }
+            }
+        }
+        
+        // Créer les questions
+        function createQuestions() {
+            questionsArea.innerHTML = '';
+            
+            gameState.level1.questions.forEach(question => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = question.locked ? 'question locked' : 'question';
+                questionDiv.id = `question-${question.id}`;
+                
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'question-title';
+                titleDiv.textContent = question.title;
+                
+                const textDiv = document.createElement('div');
+                textDiv.textContent = question.text;
+                
+                questionDiv.appendChild(titleDiv);
+                questionDiv.appendChild(textDiv);
+                
+                // Ajouter input et bouton si pas verrouillée
+                if (!question.locked) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = `answer-${question.id}`;
+                    input.placeholder = 'Votre réponse...';
+                    
+                    const button = document.createElement('button');
+                    button.textContent = 'Valider';
+                    button.onclick = () => checkAnswer(question.id);
+                    
+                    questionDiv.appendChild(input);
+                    questionDiv.appendChild(button);
+                }
+                
+                // Ajouter une coche si déjà répondue
+                if (question.answered) {
+                    const checkmark = document.createElement('div');
+                    checkmark.className = 'checkmark';
+                    checkmark.textContent = '✓';
+                    questionDiv.appendChild(checkmark);
+                }
+                
+                questionsArea.appendChild(questionDiv);
+            });
+        }
+        
+        // Vérifier une réponse
+        function checkAnswer(questionId) {
+            const question = gameState.level1.questions.find(q => q.id === questionId);
+            const input = document.getElementById(`answer-${questionId}`);
+            
+            if (input.value.toLowerCase() === question.answer.toLowerCase()) {
+                // Marquer comme répondue
+                question.answered = true;
+                
+                // Éliminer des régions
+                eliminateMapRegions(questionId);
+                
+                // Débloquer la question suivante
+                unlockNextQuestion(questionId);
+                
+                // Recréer les questions
+                createQuestions();
+                
+                // Vérifier si le niveau est terminé
+                checkLevelCompletion();
+                
+                // Alerte de réussite
+                alert('Bonne réponse !');
+            } else {
+                alert('Essayez encore...');
+            }
+        }
+        
+        // Éliminer des régions sur la carte
+        function eliminateMapRegions(questionId) {
+            let regionsToEliminate = [];
+            
+            // Différentes éliminations selon la question
+            if (questionId === 1) {
+                // Éliminer le nord-est
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 5; col < 8; col++) {
+                        regionsToEliminate.push(`${row}-${col}`);
+                    }
+                }
+            } else if (questionId === 2) {
+                // Éliminer l'est de l'Europe
+                for (let row = 3; row < 8; row++) {
+                    for (let col = 6; col < 8; col++) {
+                        regionsToEliminate.push(`${row}-${col}`);
+                    }
+                }
+            } else if (questionId === 3) {
+                // Éliminer le nord
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 4; col++) {
+                        regionsToEliminate.push(`${row}-${col}`);
+                    }
+                }
+            } else if (questionId === 4) {
+                // Éliminer nord-ouest
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 3; col++) {
+                        regionsToEliminate.push(`${row}-${col}`);
+                    }
+                }
+            } else if (questionId === 5) {
+                // Éliminer le sud-est
+                for (let row = 5; row < 8; row++) {
+                    for (let col = 5; col < 8; col++) {
+                        regionsToEliminate.push(`${row}-${col}`);
+                    }
+                }
+            }
+            
+            // Appliquer les éliminations
+            regionsToEliminate.forEach(region => {
+                if (!gameState.level1.eliminatedRegions.includes(region)) {
+                    gameState.level1.eliminatedRegions.push(region);
+                    
+                    const [row, col] = region.split('-');
+                    const cell = document.getElementById(`cell-${row}-${col}`);
+                    if (cell) {
+                        cell.classList.add('eliminated');
+                    }
+                }
+            });
+        }
+        
+        // Débloquer la question suivante
+        function unlockNextQuestion(currentQuestionId) {
+            const nextQuestion = gameState.level1.questions.find(q => q.id === currentQuestionId + 1);
+            if (nextQuestion) {
+                nextQuestion.locked = false;
+            }
+        }
+        
+        // Vérifier si le niveau est terminé
+        function checkLevelCompletion() {
+            const allAnswered = gameState.level1.questions.every(q => q.answered);
+            
+            if (allAnswered) {
+                gameState.level1.completed = true;
+                nextButton.disabled = false;
+                
+                alert('Bravo ! Vous avez découvert que notre mariage aura lieu en Normandie !');
+            }
+        }
+        
+        // Afficher l'indice suivant
+        function showNextHint() {
+            if (gameState.level1.currentHintIndex < gameState.level1.hints.length - 1) {
+                gameState.level1.currentHintIndex++;
+                currentHint.textContent = gameState.level1.hints[gameState.level1.currentHintIndex];
+            } else {
+                alert('Vous avez déjà utilisé tous les indices disponibles.');
+            }
+        }
+        
+        // Passer au niveau suivant
+        function goToNextLevel() {
+            if (gameState.level1.completed) {
+                window.location.href = 'niveau2.html';
+            }
+        }
+        
+        // Retour à l'accueil
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+        
+        // Initialiser le jeu au chargement
+        document.addEventListener('DOMContentLoaded', initGame);
+    </script>
+</body>
+</html>
