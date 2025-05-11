@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 1 - Trouvez où nous nous marions</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f4ed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-image: linear-gradient(to bottom, #f9f4ed, #fcf0f5);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Fleurs décoratives */
+        .flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 1;
+        }
+        
+        .flower-1 {
+            top: 20px;
+            left: 20px;
+            transform: rotate(-15deg);
+        }
+        
+        .flower-2 {
+            top: 30px;
+            right: 30px;
+            transform: rotate(20deg);
+        }
+        
+        .flower-3 {
+            bottom: 40px;
+            left: 40px;
+            transform: rotate(10deg);
+        }
+        
+        .flower-4 {
+            bottom: 30px;
+            right: 25px;
+            transform: rotate(-10deg);
+        }
+        
+        .flower-5 {
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%) rotate(25deg);
+        }
+        
+        .flower-6 {
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%) rotate(-25deg);
+        }
+        
+        h1 {
+            color: #e83e8c;
+            margin-bottom: 10px;
+            font-size: 2.4em;
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .emoji {
+            font-size: 1.4em;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+        
+        .map-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+        
+        #europeMap {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+        }
+        
+        .cell {
+            border: 1px solid rgba(232, 62, 140, 0.1);
+            transition: background-color 0.5s ease;
+        }
+        
+        .cell.hatched {
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(232, 62, 140, 0.7),
+                rgba(232, 62, 140, 0.7) 5px,
+                rgba(232, 62, 140, 0.4) 5px,
+                rgba(232, 62, 140, 0.4) 10px
+            ), repeating-linear-gradient(
+                -45deg,
+                rgba(232, 62, 140, 0.7),
+                rgba(232, 62, 140, 0.7) 5px,
+                rgba(232, 62, 140, 0.4) 5px,
+                rgba(232, 62, 140, 0.4) 10px
+            );
+            background-color: rgba(253, 121, 168, 0.3);
+        }
+        
+        .cell:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+        
+        .cell.final-cell {
+            border: 3px solid #e83e8c;
+            background-color: rgba(232, 62, 140, 0.1);
+            cursor: pointer;
+        }
+        
+        .question-container {
+            margin: 30px 0;
+            padding: 25px;
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+        }
+        
+        .question {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            border: 3px solid #fd79a8;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.2);
+        }
+        
+        h3 {
+            color: #6c5ce7;
+            margin-top: 0;
+        }
+        
+        input[type="text"] {
+            padding: 10px;
+            margin: 8px;
+            border: 2px solid #fd79a8;
+            border-radius: 5px;
+            width: min(250px, 90%);
+            max-width: 100%;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #e83e8c;
+            outline: none;
+            box-shadow: 0 0 5px rgba(232, 62, 140, 0.3);
+        }
+        
+        button {
+            display: inline-block;
+            background-image: linear-gradient(to right, #fd79a8, #e83e8c);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            margin: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(232, 62, 140, 0.5);
+        }
+        
+        button:disabled {
+            background-image: linear-gradient(to right, #cccccc, #999999);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .next-button,
+        .next-question-button {
+            background-image: linear-gradient(to right, #6c5ce7, #00cec9);
+        }
+        
+        .next-question-button {
+            margin-top: 20px;
+        }
+        
+        .hint {
+            margin-top: 15px;
+            padding: 15px;
+            background: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            border-radius: 0 15px 15px 0;
+            display: none;
+            text-align: left;
+            font-style: italic;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #e83e8c;
+        }
+        
+        .progress {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-image: linear-gradient(to right, #fd79a8, #e83e8c);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            z-index: 1000;
+        }
+        
+        .celebration {
+            background-color: rgba(236, 236, 255, 0.8);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 3px solid #fd79a8;
+            display: none;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.2);
+        }
+        
+        .celebration h2 {
+            color: #6c5ce7;
+            margin-bottom: 20px;
+        }
+        
+        .map-reveal {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            border: 3px solid #fd79a8;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.2);
+        }
+        
+        .map-reveal img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .radio-option {
+            display: block;
+            margin: 10px 0;
+            text-align: left;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .radio-option:hover {
+            background: rgba(253, 121, 168, 0.1);
+        }
+        
+        .radio-option label {
+            cursor: pointer;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .radio-option input[type="radio"] {
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        /* Confetti background */
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0.6;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        /* Animation de couleurs */
+        @keyframes colorChange {
+            0% { color: #e83e8c; }
+            25% { color: #fd79a8; }
+            50% { color: #6c5ce7; }
+            75% { color: #00cec9; }
+            100% { color: #e83e8c; }
+        }
+        
+        .color-changing {
+            animation: colorChange 8s infinite;
+            font-weight: bold;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            input[type="text"] {
+                width: 100%;
+                margin: 8px auto;
+                display: block;
+            }
+            
+            button {
+                margin: 5px;
+                padding: 10px 20px;
+                font-size: 14px;
+                width: auto;
+                max-width: 100%;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .flower {
+                width: 30px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Fleurs décoratives -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fd79a8'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-1">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2300cec9'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-2">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%236c5ce7'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-3">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fdcb6e'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-4">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2374b9ff'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-5">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23ff7675'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-6">
+        
+        <!-- Script pour les confettis -->
+        <script>
+            function createConfetti() {
+                const container = document.querySelector('.container');
+                const colors = ['#fd79a8', '#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#ff7675', '#74b9ff'];
+                
+                for (let i = 0; i < 30; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    // Position aléatoire
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    
+                    confetti.style.left = `${x}%`;
+                    confetti.style.top = `${y}%`;
+                    
+                    // Couleur aléatoire
+                    const colorIndex = Math.floor(Math.random() * colors.length);
+                    confetti.style.backgroundColor = colors[colorIndex];
+                    
+                    // Taille aléatoire
+                    const size = Math.random() * 10 + 5;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Animation
+                    const duration = Math.random() * 5 + 5;
+                    confetti.style.animation = `float ${duration}s infinite alternate ease-in-out`;
+                    confetti.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    container.appendChild(confetti);
+                }
+            }
+            
+            // Exécuter lors du chargement de la page
+            window.addEventListener('DOMContentLoaded', createConfetti);
+        </script>
+        
+        <div class="progress">Question: <span id="currentQuestion">1</span>/15</div>
+        
+        <h1><span class="emoji">🗺️</span> Trouvez où nous nous marions ! <span class="emoji">💕</span></h1>
+        
+        <div class="question-container" id="questionsContainer">
+            <!-- Questions will be loaded here -->
+        </div>
+        
+        <div class="map-container">
+            <img id="europeMap" src="Carte_europe.png" alt="Carte de l'Europe">
+            <div class="grid-overlay" id="gridOverlay">
+                <!-- 8x8 grid cells will be created here -->
+            </div>
+        </div>
+        
+        <div id="celebration" class="celebration">
+            <h2><span class="emoji">🎉</span> Félicitations ! <span class="emoji">🎉</span></h2>
+            <p>Vous avez répondu à toutes les questions ! Cliquez sur le carré <span class="color-changing">D5</span> pour découvrir la région !</p>
+        </div>
+        
+        <div id="mapReveal" class="map-reveal">
+            <h2><span class="emoji">🎯</span> Félicitations ! Vous avez trouvé la région !</h2>
+            <img src="Carte_maps.png" alt="Carte de la région">
+            <p style="margin-top: 20px; font-size: 1.1em;">
+                <span class="emoji">🗺️</span> Bravo, vous avez trouvé la région dans laquelle nous nous marions ! Maintenant, tentez de trouver l'endroit exact !
+            </p>
+        </div>
+        
+        <button id="nextStepButton" class="next-button" onclick="goToNextStep()" style="display: none;">
+            <span class="emoji">➡️</span> Continuer vers le niveau 2
+        </button>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                type: 'text',
+                question: 'Quel organisme nous a permis de nous rencontrer?',
+                answer: ['jci','jeune chambre','jeune chambre internationale','jeune chambre economique','jeune chambre économique'],
+                hint: 'Il s\'agit d\'une association mondiale qui offre des opportunités de développement et de leadership à des jeunes gens afin de créer un changement positif',
+                cellsToHatch: ['D2', 'F4', 'A2', 'H8', 'G8']
+            },
+            {
+                type: 'text',
+                question: 'Dans quel pays nous sommes nous rencontrées pour la 1ère fois en 2019?',
+                answer: ['suède', 'suede'],
+                hint: 'Lors de la European Academy de la JCI, plus qu\'à trouver où c\'est :-)',
+                cellsToHatch: ['G1', 'G2', 'H1', 'H2', 'H3']
+            },
+            {
+                type: 'text',
+                question: 'En quelle année nous sommes nous revues à Angers lors d\'un Congrès de notre association, et nous sommes mises en couple ?',
+                answer: ['2021'],
+                hint: '',
+                cellsToHatch: ['D6', 'E6', 'B3', 'B4']
+            },
+            {
+                type: 'text',
+                question: 'Dans quel moyen de transport avons-nous voyagé pendant 2 mois juste après nos débuts?',
+                answer: ['van'],
+                hint: 'On allait faire des vannes, à Vannes, en...',
+                cellsToHatch: ['C5', 'E8', 'F8', 'H6']
+            },
+            {
+                type: 'text',
+                question: 'Où Anne-Marie a-t-elle vécu et travaillé pendant 6 ans et demi?',
+                answer: ['angleterre', 'brighton', 'uk', 'england', 'royaume-uni', 'royaume uni'],
+                hint: '',
+                cellsToHatch: ['D3', 'D4', 'E3', 'E4']
+            },
+            {
+                type: 'text',
+                question: 'Quel est le nom de la région dans laquelle Fanny vit et travaille actuellement?',
+                answer: ['la gaume', 'gaume'],
+                hint: 'Son entreprise en parle avec ferveur, même dans son nom',
+                cellsToHatch: ['C7', 'C8', 'D7', 'D8']
+            },
+            {
+                type: 'radio',
+                question: 'Dans quoi Anne-Marie n\'a-t-elle PAS travaillé?',
+                options: [
+                    { value: 'aviation', text: 'Aviation' },
+                    { value: 'conformite_tva', text: 'Conformité TVA' },
+                    { value: 'telemarketing', text: 'Télémarketing' },
+                    { value: 'coiffure', text: 'Coiffure' }
+                ],
+                answer: 'coiffure',
+                hint: 'Nous sommes sûres que vous pouvez répondre à cette question sans indice',
+                cellsToHatch: ['A4', 'A5', 'A6', 'A7']
+            },
+            {
+                type: 'fillblank',
+                question: 'Qu\'est ce que Fanny veut être 80% du temps? "Digital ____"',
+                answer: ['nomade'],
+                hint: 'Retire 3 lettres à Normandie et tu trouveras la réponse',
+                cellsToHatch: ['B1', 'C1', 'D1', 'E1']
+            },
+            {
+                type: 'text',
+                question: 'Dans quel pays Anne-Marie a-t-elle vécu 1 an et demi et a-t-elle lancé son entreprise de coaching?',
+                answer: ['suisse'],
+                hint: 'Si on est prêt à payer un gros loyer, on peut avoir la vue sur lacs et montagnes',
+                cellsToHatch: ['F6', 'F7', 'G6', 'H7']
+            },
+            {
+                type: 'radio',
+                question: 'Quel Master vient de finir Fanny ?',
+                options: [
+                    { value: 'rh', text: 'Master en Ressources Humaines' },
+                    { value: 'coaching', text: 'Executive Master en Business Coaching et Développement des Organisations' },
+                    { value: 'digital', text: 'Master en Communication et Marketing Digital' },
+                    { value: 'innovation', text: 'Executive Master en Innovation et Entrepreneuriat' }
+                ],
+                answer: 'coaching',
+                hint: 'Il a été fait à l\'UCLouvain',
+                cellsToHatch: ['F1', 'F2', 'F3', 'G3']
+            },
+            {
+                type: 'text',
+                question: 'Comment s\'appelle l\'entreprise d\'Anne-Marie aujourd\'hui?',
+                answer: ['revalestic', 'reval.estic'],
+                hint: 'Google est ton ami',
+                cellsToHatch: ['A3', 'B5', 'B6', 'B7']
+            },
+            {
+                type: 'radio',
+                question: 'Quel sommet Anne-Marie a-t-elle gravi... deux fois ?',
+                options: [
+                    { value: 'fuji', text: 'Le Mont Fuji, au Japon' },
+                    { value: 'toubkal', text: 'Le Mont Toubkal, au Maroc' },
+                    { value: 'blanc', text: 'Le Mont Blanc, en France' },
+                    { value: 'kilimandjaro', text: 'Le Kilimandjaro, en Tanzanie' }
+                ],
+                answer: 'kilimandjaro',
+                hint: 'C\'était pour le JCI Youth Summit, si vous cherchez sur internet, vous devriez même tomber sur quelques pépites',
+                cellsToHatch: ['E7', 'B2', 'C2', 'C3', 'C4']
+            },
+            {
+                type: 'radio',
+                question: 'Laquelle de ces expériences Fanny n\'a PAS (encore) vécue ?',
+                options: [
+                    { value: 'allemagne', text: 'Partir 1 mois en Allemagne en tant que fille au pair pour s\'occuper de deux garçons de 2 et 8 ans' },
+                    { value: 'japon', text: 'Partir 1 mois au Japon en "Youth Camp and Exchange" avec le Lions Club, puis dans trois familles locales' },
+                    { value: 'indonesie', text: 'Partir 1 mois en Indonésie pour enseigner l\'anglais dans une école de village et apprendre le batik traditionnel' },
+                    { value: 'argentine', text: 'Partir 1 mois en Argentine seule pour faire du trekking, voir le Perito Moreno, les chutes d\'Iguazú et les baleines à Ushuaïa' }
+                ],
+                answer: 'indonesie',
+                hint: '',
+                cellsToHatch: ['E2', 'H5', 'G4', 'G5', 'H4']
+            },
+            {
+                type: 'radio',
+                question: 'Comment s\'est passée la demande en mariage de Anne-Marie à Fanny?',
+                options: [
+                    { value: 'bouteille', text: 'La bouteille à la mer: L\'autre a préparé un pique-nique magique avec nappe, coussins, fleurs et champagne, dans un spot breton à la vue imprenable. La demande se trouvait dans une bouteille accrochée à un arbre...' },
+                    { value: 'parachute', text: 'Le saut en parachute: La question a été posée à l\'atterrissage d\'un saut en tandem : "Maintenant que tu es vivante... tu veux m\'épouser ?"' },
+                    { value: 'alerte_meteo', text: 'La fausse alerte météo : Une appli météo bidonnée annonçait une tempête. Pour "se mettre à l\'abri", l\'élue a conduit jusqu\'à une cabane décorée de mille lumières où l\'attendait la demande.' }
+                ],
+                answer: 'bouteille',
+                hint: 'Alors que Fanny avait les yeux bandés pour se rendre au spot, un joggeur a demandé tout haut « c\'est à vous la jolie petite nappe ? » #tupeuxpaslafermer ?',
+                cellsToHatch: ['F5', 'E5', 'A8', 'H7']
+            },
+            {
+                type: 'radio',
+                question: 'Comment s\'est passée la demande en mariage de Fanny à Anne-Marie?',
+                options: [
+                    { value: 'motarde', text: 'La motarde secrète: L\'une a pris des cours de moto en cachette, et est arrivée en moto par surprise. Puis, dans un spa, un escape game personnalisé l\'attendait, avec des énigmes menant à une lettre et à une bague...' },
+                    { value: 'karaoke', text: 'Le karaoké public : La demande a été faite en montant sur scène lors d\'un karaoké, avec une reprise personnalisée de "Can\'t Help Falling in Love"... devant un public mi-ému, mi-hilare.' },
+                    { value: 'monopoly', text: 'Le jeu de société truqué : La demande a été glissée dans une fausse carte "Chance" d\'un Monopoly personnalisé. Le ou la joueur·se a dû lire à voix haute : "Veux-tu m\'épouser ?"' }
+                ],
+                answer: 'motarde',
+                hint: 'La préparation de la demande a valu à Fanny quelques bleus...',
+                cellsToHatch: ['C6', 'G7', 'A1', 'B8']
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let answeredQuestions = 0;
+        let currentQuestionAnswered = false;
+        
+        // Initialize the grid (8x8)
+        function initializeGrid() {
+            const overlay = document.getElementById('gridOverlay');
+            
+            // Create 8x8 grid cells
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    // Convert to letter-number format (A-H, 1-8)
+                    const letter = String.fromCharCode(65 + col); // A=65
+                    const number = row + 1;
+                    cell.id = `cell-${letter}${number}`;
+                    overlay.appendChild(cell);
+                }
+            }
+        }
+
+        // Load current question
+        function loadQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const question = questions[currentQuestionIndex];
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            currentQuestionAnswered = false;
+            
+            let questionHTML = `
+                <div class="question">
+                    <h3><span class="emoji">❓</span> Question ${currentQuestionIndex + 1}</h3>
+                    <p>${question.question}</p>
+            `;
+            
+            switch (question.type) {
+                case 'text':
+                case 'fillblank':
+                    questionHTML += `
+                        <div style="text-align: center;">
+                            <input type="text" id="answer" placeholder="Votre réponse">
+                            <button onclick="checkAnswer()"><span class="emoji">✔️</span> Valider</button>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'radio':
+                    questionHTML += '<div>';
+                    question.options.forEach((option, index) => {
+                        questionHTML += `
+                            <div class="radio-option">
+                                <label>
+                                    <input type="radio" name="answer" value="${option.value}">
+                                    <span><strong>${String.fromCharCode(97 + index)})</strong> ${option.text}</span>
+                                </label>
+                            </div>
+                        `;
+                    });
+                    questionHTML += `
+                        </div>
+                        <button onclick="checkAnswer()"><span class="emoji">✔️</span> Valider</button>
+                    `;
+                    break;
+            }
+            
+            questionHTML += `
+                <button onclick="showHint()"><span class="emoji">💡</span> Besoin d'un indice ?</button>
+                ${question.hint ? `<div class="hint" id="hint"><span class="emoji">💡</span> ${question.hint}</div>` : ''}
+                <div class="feedback" id="feedback"></div>
+            `;
+            
+            if (currentQuestionIndex > 0) {
+                questionHTML += '<button onclick="previousQuestion()"><span class="emoji">⬅️</span> Question précédente</button>';
+            }
+            
+            // Ajout du bouton "Question suivante"
+            if (currentQuestionIndex < questions.length - 1) {
+                questionHTML += '<button id="nextQuestionBtn" class="next-question-button" onclick="nextQuestion()" disabled><span class="emoji">➡️</span> Question suivante</button>';
+            }
+            
+            questionHTML += '</div>';
+            container.innerHTML = questionHTML;
+        }
+
+        // Show hint
+        function showHint() {
+            const hint = document.getElementById('hint');
+            if (hint) {
+                hint.style.display = 'block';
+            }
+        }
+
+        // Check answer
+        function checkAnswer() {
+            const question = questions[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            let userAnswer;
+            
+            if (question.type === 'radio') {
+                const selected = document.querySelector('input[name="answer"]:checked');
+                if (!selected) {
+                    feedback.innerHTML = '<span class="error"><span class="emoji">❌</span> Veuillez sélectionner une réponse.</span>';
+                    return;
+                }
+                userAnswer = selected.value;
+            } else {
+                userAnswer = document.getElementById('answer').value.trim().toLowerCase();
+                
+                // Remove accents and handle special characters
+                userAnswer = userAnswer.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            }
+            
+            let isCorrect = false;
+            
+            if (question.type === 'radio') {
+                isCorrect = userAnswer === question.answer;
+            } else {
+                isCorrect = question.answer.some(answer => 
+                    answer.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === userAnswer
+                );
+            }
+            
+            if (isCorrect) {
+                feedback.innerHTML = '<span class="success"><span class="emoji">✅</span> Correct !</span>';
+                currentQuestionAnswered = true;
+                
+                // Activer le bouton "Question suivante"
+                const nextBtn = document.getElementById('nextQuestionBtn');
+                if (nextBtn) {
+                    nextBtn.disabled = false;
+                }
+                
+                // Hatch specified cells
+                if (question.cellsToHatch && question.cellsToHatch.length > 0) {
+                    question.cellsToHatch.forEach(cellId => {
+                        const cell = document.getElementById(`cell-${cellId}`);
+                        if (cell) {
+                            cell.classList.add('hatched');
+                        }
+                    });
+                }
+                
+                answeredQuestions++;
+                
+                // Check if all questions are answered
+                if (currentQuestionIndex === questions.length - 1) {
+                    setTimeout(() => {
+                        document.getElementById('celebration').style.display = 'block';
+                        // Highlighter la cellule D5
+                        const finalCell = document.getElementById('cell-D5');
+                        if (finalCell) {
+                            finalCell.classList.add('final-cell');
+                            finalCell.onclick = function() {
+                                revealMap();
+                            };
+                        }
+                    }, 500);
+                }
+            } else {
+                feedback.innerHTML = '<span class="error"><span class="emoji">❌</span> Essayez encore !</span>';
+            }
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (currentQuestionAnswered && currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        // Previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        // Reveal map
+        function revealMap() {
+            document.getElementById('celebration').style.display = 'none';
+            document.getElementById('mapReveal').style.display = 'block';
+            document.getElementById('nextStepButton').style.display = 'inline-block';
+            
+            // Changer le texte du bouton
+            document.getElementById('nextStepButton').innerHTML = '<span class="emoji">🎯</span> Niveau 2';
+        }
+
+        // Go to next step
+        function goToNextStep() {
+            // Replace with your next step URL
+            window.location.href = 'niveau2bon.html';
+        }
+
+        // Initialize the game
+        initializeGrid();
+        loadQuestion();
+    </script>
+</body>
+</html>
