@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Félicitations ! 🎉</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f4ed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-image: linear-gradient(to bottom, #f9f4ed, #fcf0f5);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Fleurs décoratives */
+        .flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                max-width: 95%;
+                margin: 10px auto;
+                padding: 20px;
+            }
+            
+            .flower {
+                width: 35px;
+                height: 35px;
+            }
+        }
+        
+        .flower-1 {
+            top: 20px;
+            left: 20px;
+            transform: rotate(-15deg);
+        }
+        
+        .flower-2 {
+            top: 30px;
+            right: 30px;
+            transform: rotate(20deg);
+        }
+        
+        .flower-3 {
+            bottom: 40px;
+            left: 40px;
+            transform: rotate(10deg);
+        }
+        
+        .flower-4 {
+            bottom: 30px;
+            right: 25px;
+            transform: rotate(-10deg);
+        }
+        
+        .flower-5 {
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%) rotate(25deg);
+        }
+        
+        .flower-6 {
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%) rotate(-25deg);
+        }
+        
+        h1 {
+            color: #e83e8c;
+            margin-bottom: 10px;
+            font-size: 2.4em;
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #6c5ce7;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            position: relative;
+            z-index: 2;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.3em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+            
+            h2 {
+                font-size: 1.1em;
+            }
+        }
+        
+        .emoji {
+            font-size: 1.4em;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+        
+        .wedding-info {
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+            border: 3px solid #fd79a8;
+        }
+        
+        @media (max-width: 768px) {
+            .wedding-info {
+                padding: 20px;
+                margin: 20px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .wedding-info {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+        
+        .info-item {
+            margin: 20px 0;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        
+        .highlight {
+            font-weight: bold;
+            color: #e83e8c;
+        }
+        
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+            padding: 0 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .photo-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin: 30px 0;
+                padding: 0 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .photo-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                margin: 20px 0;
+                padding: 0;
+            }
+        }
+        
+        .photo-container {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .photo-container img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        @media (max-width: 480px) {
+            .photo-container img {
+                height: 250px;
+            }
+        }
+        
+        .message-section {
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .message-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .message-section {
+                padding: 15px;
+                font-size: 14px;
+            }
+        }
+        
+        .message-section p {
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+        
+        .form-section {
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+            border: 3px solid #6c5ce7;
+        }
+        
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 20px;
+                margin: 20px 0;
+            }
+        }
+        
+        .google-form-container {
+            margin-top: 20px;
+            min-height: 800px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 10px;
+            border: 2px solid #6c5ce7;
+            overflow: hidden;
+        }
+        
+        /* Ajustements pour mobile */
+        @media (max-width: 768px) {
+            .google-form-container {
+                min-height: 600px;
+                padding: 5px;
+            }
+            
+            .google-form-container iframe {
+                height: 600px !important;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .google-form-container {
+                min-height: 500px;
+            }
+            
+            .google-form-container iframe {
+                height: 500px !important;
+            }
+        }
+        
+        .restart-button {
+            display: inline-block;
+            background-image: linear-gradient(to right, #fd79a8, #e83e8c);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .restart-button {
+                font-size: 14px;
+                padding: 10px 20px;
+                margin: 15px 0;
+            }
+        }
+        
+        .restart-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(232, 62, 140, 0.5);
+        }
+        
+        /* Confetti background */
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0.6;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        /* Animation de couleurs */
+        @keyframes colorChange {
+            0% { color: #e83e8c; }
+            25% { color: #fd79a8; }
+            50% { color: #6c5ce7; }
+            75% { color: #00cec9; }
+            100% { color: #e83e8c; }
+        }
+        
+        .color-changing {
+            animation: colorChange 8s infinite;
+            font-weight: bold;
+        }
+        
+        /* Animation pour la victoire */
+        @keyframes celebration {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.05) rotate(-1deg); }
+            75% { transform: scale(1.05) rotate(1deg); }
+        }
+        
+        .celebration-animation {
+            animation: celebration 0.6s ease-in-out;
+        }
+        
+        /* Confettis de victoire */
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-10px) rotateZ(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotateZ(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container celebration-animation">
+        <!-- Fleurs décoratives -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fd79a8'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-1">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2300cec9'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-2">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.svg2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%236c5ce7'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-3">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fdcb6e'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-4">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2374b9ff'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-5">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23ff7675'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-6">
+        
+        <!-- Script pour les confettis de fond -->
+        <script>
+            function createBackgroundConfetti() {
+                const container = document.querySelector('.container');
+                const colors = ['#fd79a8', '#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#ff7675', '#74b9ff'];
+                
+                for (let i = 0; i < 30; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    // Position aléatoire
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    
+                    confetti.style.left = `${x}%`;
+                    confetti.style.top = `${y}%`;
+                    
+                    // Couleur aléatoire
+                    const colorIndex = Math.floor(Math.random() * colors.length);
+                    confetti.style.backgroundColor = colors[colorIndex];
+                    
+                    // Taille aléatoire
+                    const size = Math.random() * 10 + 5;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Animation
+                    const duration = Math.random() * 5 + 5;
+                    confetti.style.animation = `float ${duration}s infinite alternate ease-in-out`;
+                    confetti.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    container.appendChild(confetti);
+                }
+            }
+            
+            // Fonction pour créer des confettis de victoire
+            function createVictoryConfetti() {
+                const colors = ['#fd79a8', '#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#ff7675', '#74b9ff'];
+                
+                for (let i = 0; i < 60; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.style.position = 'fixed';
+                        confetti.style.left = Math.random() * 100 + 'vw';
+                        confetti.style.top = '-10px';
+                        confetti.style.width = Math.random() * 8 + 4 + 'px';
+                        confetti.style.height = confetti.style.width;
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.borderRadius = '50%';
+                        confetti.style.animation = 'confetti-fall ' + (Math.random() * 3 + 2) + 's linear';
+                        confetti.style.zIndex = '10000';
+                        document.body.appendChild(confetti);
+                        
+                        setTimeout(() => {
+                            confetti.remove();
+                        }, 5000);
+                    }, i * 50);
+                }
+            }
+            
+            // Exécuter lors du chargement de la page
+            window.addEventListener('DOMContentLoaded', () => {
+                createBackgroundConfetti();
+                createVictoryConfetti();
+            });
+        </script>
+        
+        <h1><span class="emoji">🎉</span> Félicitations ! <span class="emoji">🥂</span></h1>
+        <h2>Vous avez trouvé les informations de notre mariage !</h2>
+        
+        <div class="wedding-info">
+            <h2><span class="emoji">💕</span> Notre Mariage <span class="emoji">💕</span></h2>
+            <div class="info-item">
+                <span class="emoji">📅</span> <span class="highlight">Date :</span> Le 2 mai 2026
+            </div>
+            <div class="info-item">
+                <span class="emoji">📍</span> <span class="highlight">Lieu :</span> Colleville-Montgomery
+            </div>
+            <div class="info-item">
+                <span class="emoji">🏰</span> <span class="highlight">Domaine :</span> La Balanderie
+            </div>
+        </div>
+        
+        <div class="photo-grid">
+            <div class="photo-container">
+                <img src="/api/placeholder/400/200" alt="Anne-Marie et Fanny - Photo 1">
+            </div>
+            <div class="photo-container">
+                <img src="/api/placeholder/400/200" alt="Anne-Marie et Fanny - Photo 2">
+            </div>
+            <div class="photo-container">
+                <img src="/api/placeholder/400/200" alt="Anne-Marie et Fanny - Photo 3">
+            </div>
+            <div class="photo-container">
+                <img src="/api/placeholder/400/200" alt="Anne-Marie et Fanny - Photo 4">
+            </div>
+        </div>
+        
+        <div class="message-section">
+            <h2><span class="emoji">💌</span> Un grand MERCI !</h2>
+            <p>
+                <span class="emoji">🎊</span> Vous avez réussi à découvrir le lieu et la date de notre mariage. Merci d'avoir joué à notre jeu !
+            </p>
+            <p>
+                <span class="emoji">🥰</span> Nous avons hâte de célébrer cette <span class="color-changing">journée spéciale</span> avec vous le 2 mai 2026 au Domaine de la Balanderie à Colleville-Montgomery.
+            </p>
+            <p>
+                <span class="emoji">💕</span> C'est avec une immense joie que nous vous accueillerons pour partager ce moment unique de notre vie.
+            </p>
+        </div>
+        
+        <div class="form-section">
+            <h2><span class="emoji">✉️</span> Recevoir l'invitation officielle</h2>
+            <p>Pour recevoir votre invitation officielle, merci de nous transmettre :</p>
+            <ul style="text-align: left; margin-left: 30px;">
+                <li><span class="emoji">📧</span> Votre adresse e-mail</li>
+                <li><span class="emoji">🏠</span> Votre adresse postale</li>
+                <li><span class="emoji">📱</span> Votre numéro de téléphone</li>
+            </ul>
+            
+            <div class="google-form-container">
+                <!-- Google Form intégré -->
+                <iframe 
+                    src="https://docs.google.com/forms/d/e/1FAIpQLSeFPjvJfRv4yFX3bpKFdTNhTPJNqv-WYryKzMdZnBG1vGAGng/viewform?embedded=true" 
+                    width="100%" 
+                    height="800" 
+                    frameborder="0" 
+                    marginheight="0" 
+                    marginwidth="0"
+                    style="border-radius: 10px;"
+                >
+                    Chargement…
+                </iframe>
+            </div>
+        </div>
+        
+        <button class="restart-button" onclick="window.location.href='index.html'">
+            <span class="emoji">🔄</span> Rejouer
+        </button>
+    </div>
+</body>
+</html>
