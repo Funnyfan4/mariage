@@ -533,22 +533,20 @@
             <p style="margin-top: 20px; font-size: 1.1em;">
                 <span class="emoji">🗺️</span> Bravo, vous avez trouvé la région dans laquelle nous nous marions !
             </p>
-            
-            <div id="finalQuestion" style="margin-top: 30px; background-color: #f5f5f5; padding: 20px; border-radius: 15px; border: 2px dashed #6c5ce7;">
-                <h3>Mais alors, c'est la Normandie ou l'Angleterre, notre lieu de mariage ?</h3>
-                <p>Cette photo devrait vous donner un indice !</p>
-                
-                <div style="margin: 20px 0;">
+            <button id="showFinalQuestionBtn" onclick="showFinalQuestion()">Continuer</button>
+        </div>
+
+        <div id="finalQuestion" style="display:non; margin-top: 30px; background-color: #f5f5f5; padding: 20px; border-radius: 15px; border: 2px dashed #6c5ce7;">
+            <h3>Mais alors, c'est la Normandie ou l'Angleterre, notre lieu de mariage ?</h3>
+            <p>Cette photo devrait vous donner un indice !</p>
+            <div style="margin: 20px 0;">
                     <img id="montSaintMichel" src="mont_michel.jpg" alt="Indice final" style="max-width: 80%; max-height: 300px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); object-fit: contain;">
-                </div>
-                
-                <div style="margin-top: 20px;">
+            </div>   
+            <div style="margin-top: 20px;">
                     <button id="normandieBtn" class="choice-btn" onclick="checkFinalAnswer('normandie')" style="background-image: linear-gradient(to right, #74b9ff, #0984e3);">Normandie</button>
                     <button id="angleterreBtn" class="choice-btn" onclick="checkFinalAnswer('angleterre')" style="background-image: linear-gradient(to right, #a29bfe, #6c5ce7);">Angleterre</button>
-                </div>
-                
-                <div id="finalFeedback" style="margin-top: 20px; font-weight: bold; display: none;"></div>
             </div>
+            <div id="finalFeedback" style="margin-top: 20px; font-weight: bold; display: none;"></div>
         </div>
         
         <button id="nextStepButton" class="next-button" onclick="goToNextStep()" style="display: none;">
@@ -896,6 +894,12 @@
             
             // Le bouton nextStepButton sera affiché seulement après la réponse à la question finale
             // document.getElementById('nextStepButton').style.display = 'inline-block';
+        }
+
+        // Show final question
+        function showFinalQuestion() {
+            document.getElementById('mapReveal').style.display = 'none';
+            document.getElementById('finalQuestion').style.display = 'block';
         }
 
         // Go to next step
