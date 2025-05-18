@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étape 2 - Trouvez le lieu exact</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f4ed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-image: linear-gradient(to bottom, #f9f4ed, #fcf0f5);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        h1 {
+            color: #e83e8c;
+            margin-bottom: 30px;
+            font-size: 2.4em;
+            position: relative;
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .emoji {
+            font-size: 1.4em;
+            vertical-align: middle;
+            margin: 0 3px;
+        }
+        
+        .progress {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-image: linear-gradient(to right, #fd79a8, #e83e8c);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.4);
+            z-index: 1000;
+        }
+        
+        .instructions {
+            margin-top: 30px;
+            padding: 25px;
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        
+        .grid-container {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 10px;
+        }
+        
+        .crossword-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 35px);
+            grid-template-rows: repeat(16, 35px);
+            gap: 1px;
+            background-color: #cccccc; /* Gris clair pour les cases noires */
+            padding: 1px;
+            border-radius: 8px;
+            margin: auto;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+        
+        .cell {
+            width: 35px;
+            height: 35px;
+            background-color: white;
+            border: 1px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .cell.black {
+            background-color: #cccccc; /* Gris clair pour les cases noires */
+        }
+        
+        .cell.highlighted-1 { background-color: #fff200; }
+        .cell.highlighted-2 { background-color: #ff7f00; }
+        .cell.highlighted-3 { background-color: #00cc44; }
+        .cell.highlighted-4 { background-color: #1a8cff; }
+        .cell.highlighted-5 { background-color: #ff3333; }
+        .cell.highlighted-6 { background-color: #ff66ff; }
+        .cell.highlighted-7 { background-color: #a64d00; }
+        .cell.highlighted-8 { background-color: #9966ff; }
+        .cell.highlighted-9 { background-color: #00e6e6; }
+        .cell.highlighted-10 { background-color: #ccff66; }
+        
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: transparent;
+            outline: none;
+        }
+        
+        .cell-number {
+            position: absolute;
+            top: 1px;
+            left: 2px;
+            font-size: 9px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        .clues-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .clues-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .clues-title {
+            color: #e83e8c;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .clue-item {
+            margin: 15px 0;
+            line-height: 1.6;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        
+        .clue-item:hover {
+            background-color: #e8f5e9;
+        }
+        
+        .clue-number {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-right: 8px;
+            min-width: 25px;
+            display: inline-block;
+        }
+        
+        .password-section {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(108, 92, 231, 0.2);
+        }
+        
+        .password-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .letter-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .letter-box:hover {
+            transform: translateY(-2px);
+        }
+        
+        .letter-box input {
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+        
+        .color-1 { background-color: #fff200; }
+        .color-2 { background-color: #ff7f00; }
+        .color-3 { background-color: #00cc44; }
+        .color-4 { background-color: #1a8cff; }
+        .color-5 { background-color: #ff3333; }
+        .color-6 { background-color: #ff66ff; }
+        .color-7 { background-color: #a64d00; }
+        .color-8 { background-color: #9966ff; }
+        .color-9 { background-color: #00e6e6; }
+        .color-10 { background-color: #ccff66; }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-validate {
+            background-image: linear-gradient(to right, #fd79a8, #e83e8c);
+        }
+        
+        .btn-validate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(232, 62, 140, 0.5);
+        }
+        
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 30px;
+        }
+        
+        #celebration {
+            margin-top: 30px;
+            padding: 30px;
+            background-color: rgba(236, 236, 255, 0.8);
+            border-radius: 15px;
+            border: 3px solid #fd79a8;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(232, 62, 140, 0.2);
+        }
+        
+        #celebration h2 {
+            color: #6c5ce7;
+            margin-bottom: 20px;
+        }
+
+        /* Styles pour la pop-up */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .popup-content h2 {
+            color: #e83e8c;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-content p {
+            font-size: 1.2em;
+            color: #333;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .popup-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 15px;
+            margin: 25px 0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .popup-btn {
+            background-image: linear-gradient(to right, #6c5ce7, #00cec9);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.5);
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+            transition: color 0.3s;
+        }
+
+        .close-popup:hover {
+            color: #e83e8c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Fleurs décoratives */
+        .flower {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            z-index: 1;
+        }
+        
+        .flower-1 {
+            top: 20px;
+            left: 20px;
+            transform: rotate(-15deg);
+        }
+        
+        .flower-2 {
+            top: 30px;
+            right: 30px;
+            transform: rotate(20deg);
+        }
+        
+        .flower-3 {
+            bottom: 40px;
+            left: 40px;
+            transform: rotate(10deg);
+        }
+        
+        .flower-4 {
+            bottom: 30px;
+            right: 25px;
+            transform: rotate(-10deg);
+        }
+        
+        .flower-5 {
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%) rotate(25deg);
+        }
+        
+        .flower-6 {
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%) rotate(-25deg);
+        }
+        
+        /* Animation de couleurs */
+        @keyframes colorChange {
+            0% { color: #e83e8c; }
+            25% { color: #fd79a8; }
+            50% { color: #6c5ce7; }
+            75% { color: #00cec9; }
+            100% { color: #e83e8c; }
+        }
+        
+        .color-changing {
+            animation: colorChange 8s infinite;
+            font-weight: bold;
+        }
+        
+        /* Confetti background */
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0.6;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-100px) rotate(360deg); }
+        }
+        
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        /* Style responsive */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px auto;
+                padding: 20px;
+                max-width: 95%;
+            }
+            
+            h1 {
+                font-size: 1.8em !important;
+            }
+            
+            .grid-container {
+                overflow-x: auto;
+                padding: 10px 0;
+            }
+            
+            .clues-wrapper {
+                grid-template-columns: 1fr !important;
+            }
+            
+            .flower {
+                width: 35px;
+                height: 35px;
+            }
+
+            .popup-content {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .popup-content h2 {
+                font-size: 1.8em;
+            }
+
+            .popup-content p {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Fleurs décoratives -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fd79a8'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-1">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2300cec9'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-2">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%236c5ce7'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-3">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23fdcb6e'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-4">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%2374b9ff'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-5">
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0' fill='%23ff7675'/%3E%3Ccircle cx='50' cy='50' r='15' fill='%23ffeaa7'/%3E%3C/svg%3E" class="flower flower-6">
+        
+        <!-- Confetti -->
+        <script>
+            function createConfetti() {
+                const container = document.querySelector('.container');
+                const colors = ['#fd79a8', '#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#ff7675', '#74b9ff'];
+                
+                for (let i = 0; i < 40; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    
+                    // Position aléatoire
+                    const x = Math.random() * 100;
+                    const y = Math.random() * 100;
+                    
+                    confetti.style.left = `${x}%`;
+                    confetti.style.top = `${y}%`;
+                    
+                    // Couleur aléatoire
+                    const colorIndex = Math.floor(Math.random() * colors.length);
+                    confetti.style.backgroundColor = colors[colorIndex];
+                    
+                    // Taille aléatoire
+                    const size = Math.random() * 10 + 5;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    
+                    // Animation
+                    const duration = Math.random() * 5 + 5;
+                    confetti.style.animation = `float ${duration}s infinite alternate ease-in-out`;
+                    confetti.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    container.appendChild(confetti);
+                }
+            }
+            
+            // Exécuter lors du chargement de la page
+            window.addEventListener('DOMContentLoaded', createConfetti);
+        </script>
+        
+        <div class="progress">Étape: 2/4</div>
+        
+        <h1><span class="emoji">🏰</span> Trouvez le lieu exact <span class="emoji">🔍</span></h1>
+        
+        <div class="instructions">
+            <p>Complétez le mot croisé pour découvrir le <span class="color-changing">domaine</span> où se déroulera notre mariage !</p>
+            <p>Les cases <span class="color-changing">colorées</span> constituent le mot de passe pour passer au niveau suivant.</p>
+            <p>Si vous êtes sur un smartphone, remplissez cette grille en mettant votre téléphone à l'horizontale.</p>
+        </div>
+        
+        <div class="grid-container">
+            <div class="crossword-grid" id="grid"></div>
+        </div>
+
+        <div class="clues-wrapper">
+            <div class="clues-section">
+                <div class="clues-title">HORIZONTAL</div>
+                <div class="clue-item"><span class="clue-number">2.</span> Cette ville fut le cœur du duché de Guillaume le Conquérant, et abrite deux abbayes</div>
+                <div class="clue-item"><span class="clue-number">4.</span> C'est le nom de famille de Fanny (coïncidence, le Pays d'Auge, qui se prononce presque pareil, est juste à côté de où nous nous marions, ça ne s'invente pas !)</div>
+                <div class="clue-item"><span class="clue-number">8.</span> Symbole d'un mariage normand heureux : il est doux, local, et mousseux (et en compétition aussi avec son copain Breton!)</div>
+                <div class="clue-item"><span class="clue-number">9.</span> Il a eu lieu sur bien des plages de Normandie le 6 juin 1944</div>
+            </div>
+            
+            <div class="clues-section">
+                <div class="clues-title">VERTICAL</div>
+                <div class="clue-item"><span class="clue-number">1.</span> Appelée Normande en local, tachetée de blanc et brun, célèbre pour son lait riche</div>
+                <div class="clue-item"><span class="clue-number">3.</span> C'est le nom de famille d'Anne-Marie</div>
+                <div class="clue-item"><span class="clue-number">5.</span> Célèbre distillation de cidre, ce spiritueux porte le nom du département normand dans lequel nous nous marions</div>
+                <div class="clue-item"><span class="clue-number">6.</span> Excellent dessert normand (et aussi breton d'ailleurs !). Se déguste très bien flambé, avec de la glace, du caramel beurre salé, ou simplement du sucre (et même un peu de citron!)</div>
+                <div class="clue-item"><span class="clue-number">7.</span> Fromage normand AOP au cœur fondant, né au XIXe siècle à Vimoutiers (on l'adore fondu au barbecue !)</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn" onclick="checkGrid()">Vérifier</button>
+            <button class="btn" onclick="clearGrid()">Effacer</button>
+        </div>
+
+        <div id="result"></div>
+        
+        <div class="password-section">
+            <h2><span class="emoji">🔐</span> Code d'accès <span class="emoji">✨</span></h2>
+            <p>Notre mariage se déroulera au <span class="color-changing">Domaine de la</span> __________ (10 lettres)</p>
+            <div class="password-box">
+                <div class="letter-box color-1"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-2"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-3"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-4"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-5"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-6"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-7"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-8"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-9"><input type="text" maxlength="1" class="password-letter"></div>
+                <div class="letter-box color-10"><input type="text" maxlength="1" class="password-letter"></div>
+            </div>
+            <button class="btn btn-validate" onclick="checkPassword()"><span class="emoji">✔️</span> Valider</button>
+            <div id="passwordResult"></div>
+        </div>
+        
+        <div id="celebration" style="display:none;">
+            <h2><span class="emoji">🎉</span> Félicitations ! <span class="emoji">🎉</span></h2>
+            <p>Vous avez trouvé le lieu exact de notre mariage : <span class="color-changing">le Domaine de la Balanderie !</span></p>
+            <p>Vous pouvez à présent remettre votre téléphone à la verticale.</p>
+            <button class="btn" style="background-image: linear-gradient(to right, #6c5ce7, #00cec9);" onclick="window.location.href='niveau3final.html'"><span class="emoji">➡️</span> Continuer l'aventure</button>
+        </div>
+    </div>
+
+    <!-- Pop-up de victoire -->
+    <div id="victoryPopup" class="popup-overlay">
+        <div class="popup-content">
+            <button class="close-popup" onclick="closePopup()">×</button>
+            <h2><span class="emoji">🎉</span> Bravo, vous avez réussi le niveau 2 ! <span class="emoji">🎉</span></h2>
+            <p>Notre mariage se déroulera au <strong class="color-changing">Domaine de la Balanderie</strong>,<br>
+            à <strong>Colleville-Montgomery</strong> !</p>
+            <img src="balanderie.png" alt="Domaine de la Balanderie" class="popup-image">
+            <p>Vous pouvez à présent remettre votre téléphone à la verticale.</p>
+            <button class="popup-btn" onclick="goToLevel3()">
+                <span class="emoji">➡️</span> Continuer vers le niveau 3
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Données du mot croisé
+        const grid = [
+            ["#", "#", "V", "#", "#", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "C", "A", "E", "N", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "#", "C", "#", "#", "#", "L", "#", "#", "#", "#", "#"], 
+            ["#", "#", "H", "O", "G", "G", "E", "#", "#", "#", "#", "#"], 
+            ["#", "#", "E", "#", "#", "#", "S", "#", "#", "#", "#", "#"], 
+            ["#", "#", "#", "#", "#", "#", "T", "#", "#", "#", "#", "#"], 
+            ["#", "#", "#", "C", "#", "#", "I", "#", "#", "C", "#", "#"], 
+            ["#", "C", "#", "A", "#", "#", "C", "I", "D", "R", "E", "#"], 
+            ["#", "A", "#", "L", "#", "#", "#", "#", "#", "E", "#", "#"], 
+            ["#", "M", "#", "V", "#", "#", "#", "#", "#", "P", "#", "#"], 
+            ["D", "E", "B", "A", "R", "Q", "U", "E", "M", "E", "N", "T"], 
+            ["#", "M", "#", "D", "#", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "B", "#", "O", "#", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "E", "#", "S", "#", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "R", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"], 
+            ["#", "T", "#", "#", "#", "#", "#", "#", "#", "#", "#", "#"]
+        ];
+
+        // Positions des numéros
+        const numbers = {
+            "0-2": 1,  // V (VACHE)
+            "1-1": 2,  // C (CAEN)
+            "2-6": 3,  // L (LESTIC)
+            "3-2": 4,  // H (HOGGE)
+            "6-3": 5,  // C (CALVADOS)
+            "6-9": 6,  // C (CREPE)
+            "7-1": 7,  // C (CAMEMBERT)
+            "7-6": 8,  // C (CIDRE)
+            "10-0": 9  // D (DEBARQUEMENT)
+        };
+        
+        // Positions des lettres à surligner (dans l'ordre pour le mot de passe)
+        const highlightedCells = [
+            "12-1",  // B
+            "10-3",  // A
+            "2-6",   // L
+            "1-2",   // A
+            "1-4",   // N
+            "11-3",  // D
+            "3-6",   // E
+            "7-9",   // R
+            "7-7",   // I
+            "10-9"   // E
+        ];
+
+        // Créer la grille
+        function createGrid() {
+            const gridElement = document.getElementById('grid');
+            if (!gridElement) {
+                console.error("Élément 'grid' non trouvé");
+                return;
+            }
+            
+            gridElement.innerHTML = '';
+            
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[row].length; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    
+                    const cellKey = `${row}-${col}`;
+                    const highlightIndex = highlightedCells.indexOf(cellKey);
+                    
+                    if (highlightIndex !== -1) {
+                        cell.classList.add(`highlighted-${highlightIndex + 1}`);
+                    }
+                    
+                    if (grid[row][col] === '#') {
+                        cell.classList.add('black');
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = 1;
+                        input.setAttribute('data-row', row);
+                        input.setAttribute('data-col', col);
+                        
+                        input.addEventListener('input', function(e) {
+                            this.value = this.value.toUpperCase();
+                            
+                            // Passer à la case suivante
+                            if (this.value) {
+                                const nextRow = row;
+                                const nextCol = col + 1;
+                                const nextInput = document.querySelector(`input[data-row="${nextRow}"][data-col="${nextCol}"]`);
+                                if (nextInput) nextInput.focus();
+                            }
+                        });
+                        
+                        // Ajout des événements pour les flèches du clavier
+                        input.addEventListener('keydown', function(e) {
+                            const currentRow = parseInt(this.getAttribute('data-row'));
+                            const currentCol = parseInt(this.getAttribute('data-col'));
+                            
+                            if (e.key === 'ArrowRight') {
+                                const nextInput = document.querySelector(`input[data-row="${currentRow}"][data-col="${currentCol + 1}"]`);
+                                if (nextInput) nextInput.focus();
+                            } else if (e.key === 'ArrowLeft') {
+                                const prevInput = document.querySelector(`input[data-row="${currentRow}"][data-col="${currentCol - 1}"]`);
+                                if (prevInput) prevInput.focus();
+                            } else if (e.key === 'ArrowDown') {
+                                const downInput = document.querySelector(`input[data-row="${currentRow + 1}"][data-col="${currentCol}"]`);
+                                if (downInput) downInput.focus();
+                            } else if (e.key === 'ArrowUp') {
+                                const upInput = document.querySelector(`input[data-row="${currentRow - 1}"][data-col="${currentCol}"]`);
+                                if (upInput) upInput.focus();
+                            }
+                        });
+                        
+                        cell.appendChild(input);
+                        
+                        if (numbers[cellKey]) {
+                            const numSpan = document.createElement('span');
+                            numSpan.className = 'cell-number';
+                            numSpan.textContent = numbers[cellKey];
+                            cell.appendChild(numSpan);
+                        }
+                    }
+                    
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        // Vérifier la grille
+        function checkGrid() {
+            let correct = 0;
+            let total = 0;
+            
+            // D'abord, supprimer tous les indicateurs existants
+            document.querySelectorAll('.indicator').forEach(el => el.remove());
+            
+            for (let row = 0; row < grid.length; row++) {
+                for (let col = 0; col < grid[row].length; col++) {
+                    if (grid[row][col] !== '#') {
+                        total++;
+                        const cell = document.querySelector(`.cell input[data-row="${row}"][data-col="${col}"]`).parentNode;
+                        const input = cell.querySelector('input');
+                        
+                        // Réinitialiser le fond
+                        input.style.backgroundColor = '';
+                        
+                        if (input && input.value) {
+                            // Créer l'indicateur rond
+                            const indicator = document.createElement('div');
+                            indicator.className = 'indicator';
+                            indicator.style.position = 'absolute';
+                            indicator.style.width = '10px';
+                            indicator.style.height = '10px';
+                            indicator.style.borderRadius = '50%';
+                            indicator.style.bottom = '3px';
+                            indicator.style.right = '3px';
+                            indicator.style.zIndex = '2';
+                            
+                            if (input.value.toUpperCase() === grid[row][col]) {
+                                correct++;
+                                indicator.style.backgroundColor = '#28a745'; // vert
+                            } else {
+                                indicator.style.backgroundColor = '#dc3545'; // rouge
+                            }
+                            
+                            cell.appendChild(indicator);
+                        }
+                    }
+                }
+            }
+            
+            const result = document.getElementById('result');
+            const percentage = Math.round((correct / total) * 100);
+            
+            if (correct === total) {
+                result.innerHTML = '<span style="color:green">✓ Parfait ! Tous les mots sont corrects !</span>';
+            } else if (percentage >= 50) {
+                result.innerHTML = `<span style="color:orange">⚠ ${correct}/${total} lettres correctes (${percentage}%) - Continuez !</span>`;
+            } else {
+                result.innerHTML = `<span style="color:red">✗ ${correct}/${total} lettres correctes. Continuez vos efforts !</span>`;
+            }
+        }
+
+        // Effacer la grille
+        function clearGrid() {
+            const inputs = document.querySelectorAll('.cell input');
+            inputs.forEach(input => {
+                input.value = '';
+                input.style.backgroundColor = '';
+            });
+            
+            // Supprimer tous les indicateurs
+            document.querySelectorAll('.indicator').forEach(el => el.remove());
+            
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('passwordResult').innerHTML = '';
+        }
+        
+        // Vérifier le mot de passe
+        function checkPassword() {
+            const passwordInputs = document.querySelectorAll('.password-letter');
+            const result = document.getElementById('passwordResult');
+            
+            // Obtenir les lettres des cellules surlignées
+            const correctLetters = highlightedCells.map(cellKey => {
+                const [row, col] = cellKey.split('-').map(Number);
+                return grid[row][col];
+            });
+            
+            let allCorrect = true;
+            let password = '';
+            
+            passwordInputs.forEach((input, index) => {
+                password += input.value.toUpperCase();
+                if (input.value.toUpperCase() !== correctLetters[index]) {
+                    allCorrect = false;
+                }
+            });
+            
+            if (allCorrect && password.length === 10) {
+                result.innerHTML = '<span style="color:green">✓ Correct !</span>';
+                // Afficher la pop-up au lieu du div celebration
+                showVictoryPopup();
+                // Créer des confettis pour célébrer
+                createVictoryConfetti();
+            } else if (password.length < 10) {
+                result.innerHTML = '<span style="color:red">Veuillez remplir toutes les cases</span>';
+            } else {
+                result.innerHTML = '<span style="color:red">✗ Code incorrect</span>';
+            }
+        }
+
+        // Afficher la pop-up de victoire
+        function showVictoryPopup() {
+            const popup = document.getElementById('victoryPopup');
+            popup.style.display = 'flex';
+            // Empêcher le scroll du body
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Fermer la pop-up
+        function closePopup() {
+            const popup = document.getElementById('victoryPopup');
+            popup.style.display = 'none';
+            // Permettre à nouveau le scroll du body
+            document.body.style.overflow = 'auto';
+        }
+
+        // Aller au niveau 3
+        function goToLevel3() {
+            window.location.href = 'niveau3final.html';
+        }
+
+        // Fermer la pop-up en cliquant à l'extérieur
+        window.onclick = function(event) {
+            const popup = document.getElementById('victoryPopup');
+            if (event.target === popup) {
+                closePopup();
+            }
+        }
+        
+        // Setup password navigation
+        function setupPasswordNavigation() {
+            const passwordInputs = document.querySelectorAll('.password-letter');
+            
+            passwordInputs.forEach((input, index) => {
+                input.addEventListener('input', function() {
+                    this.value = this.value.toUpperCase();
+                    if (this.value && index < passwordInputs.length - 1) {
+                        passwordInputs[index + 1].focus();
+                    }
+                });
+                
+                // Permettre d'utiliser les flèches gauche et droite
+                input.addEventListener('keydown', function(e) {
+                    if (e.key === 'ArrowRight' && index < passwordInputs.length - 1) {
+                        passwordInputs[index + 1].focus();
+                    } else if (e.key === 'ArrowLeft' && index > 0) {
+                        passwordInputs[index - 1].focus();
+                    }
+                });
+            });
+        }
+        
+        // Effet de confettis de victoire
+        function createVictoryConfetti() {
+            const colors = ['#fd79a8', '#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#ff7675', '#74b9ff'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.width = Math.random() * 8 + 4 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.zIndex = '10000';
+                    confetti.style.opacity = '0.7';
+                    confetti.style.animation = 'fall 5s linear';
+                    document.body.appendChild(confetti);
+                    
+                    // Supprimer l'élément après l'animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }, i * 30);
+            }
+        }
+        
+        // Initialize everything when the page loads
+        window.onload = function() {
+            createGrid();
+            setupPasswordNavigation();
+            createConfetti();
+        };
+    </script>
+</body>
+</html>
